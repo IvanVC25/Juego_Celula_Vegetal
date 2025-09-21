@@ -1,0 +1,26 @@
+{
+  "Biologia": [
+    {"term": "Fotosíntesis", "definition": "Proceso por el cual las plantas crean su propio alimento."},
+    {"term": "Cadena alimenticia", "definition": "Relación entre organismos que se alimentan unos de otros."},
+    {"term": "Mamíferos", "definition": "Animales que amamantan a sus crías."},
+    {"term": "Glucólisis", "definition": "Degradación de glucosa para obtener energía."},
+    {"term": "Taxonomía", "definition": "Clasificación de los seres vivos."},
+    {"term": "Homeostasis", "definition": "Mantenimiento del equilibrio interno del organismo."}
+  ],
+  "Quimica": [
+    {"term": "H2O", "definition": "Fórmula química del agua."},
+    {"term": "Átomo", "definition": "Unidad básica de la materia."},
+    {"term": "Reacción química", "definition": "Proceso que transforma una o más sustancias en otras."},
+    {"term": "Molécula", "definition": "Grupo de átomos unidos por enlaces químicos."},
+    {"term": "Catión", "definition": "Ion con carga positiva."},
+    {"term": "Anión", "definition": "Ion con carga negativa."}
+  ],
+  "Fisica": [
+    {"term": "Gravedad", "definition": "Fuerza que atrae los cuerpos hacia el centro de la Tierra."},
+    {"term": "Energía cinética", "definition": "Energía de un objeto en movimiento."},
+    {"term": "Fuerza", "definition": "Interacción que cambia el estado de movimiento de un objeto."},
+    {"term": "Trabajo", "definition": "Energía transferida cuando una fuerza actúa sobre un objeto."},
+    {"term": "Ley de Newton", "definition": "Principios que describen el movimiento de los cuerpos."},
+    {"term": "Termodinámica", "definition": "Estudio de la energía y sus transformaciones."}
+  ]
+}

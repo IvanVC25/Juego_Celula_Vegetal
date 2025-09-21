@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego de Emparejamiento Textual</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Pantalla de Inicio -->
+  <div class="start-screen" id="start-screen">
+    <div class="start-container">
+      <div class="content-left">
+        <p class="subject-label">Ciencias</p>
+        <h1 class="game-title">Empareja y Aprende</h1>
+        <p class="game-description">En este juego podrás elegir un tema de ciencias y emparejar términos con sus definiciones. Encuentra todas las parejas correctas para ganar. ¡Demuestra tus conocimientos y mejora tu récord!</p>
+        
+        <div class="game-stats">
+          <div class="stat-item">
+            <span class="stat-label">Tiempo Estimado:</span>
+            <span class="stat-value">3-7 Min</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Record:</span>
+            <span class="stat-value">12 Movimientos</span>
+          </div>
+        </div>
+        
+        <button class="start-button" id="start-button">Empezar</button>
+      </div>
+      
+      <div class="content-right">
+        <div class="decorative-elements">
+          <!-- Elementos decorativos que simularán los iconos -->
+          <div class="costa-rica-map"></div>
+          <div class="icon-1"></div>
+          <div class="icon-2"></div>
+          <div class="icon-3"></div>
+          <div class="icon-4"></div>
+          <div class="icon-5"></div>
+          <div class="icon-6"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla de Selección de Tema -->
+  <div class="topic-selection-screen" id="topic-selection-screen" style="display: none;">
+    <div class="topic-container">
+      <button class="back-topic-button" id="back-topic-button">← Volver al inicio</button>
+      <h1 class="topic-title">Empareja y Aprende</h1>
+      <p class="topic-subtitle">Elige un tema para jugar!</p>
+      
+      <div class="topic-buttons">
+        <button class="topic-btn" data-topic="Quimica">Química</button>
+        <button class="topic-btn" data-topic="Biologia">Biología</button>
+        <button class="topic-btn" data-topic="Fisica">Física</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla del Juego -->
+  <div class="game-container" id="game-container" style="display: none;">
+    <div class="game-wrapper">
+      <button class="back-game-button" id="back-button">← Volver al inicio</button>
+      
+      <div class="game-content-left">
+        <h1 class="game-title-main">Empareja y Aprende</h1>
+        <p class="game-subtitle">Encuentra las parejas de términos y definiciones correctas para completar el desafío</p>
+        <div class="game-stats-container">
+          <p class="moves-counter">Movimientos: <span id="moves">0</span></p>
+          <p class="score-counter">Puntos: <span id="score">0</span></p>
+          <p class="timer-counter">Tiempo: <span id="timer">0:00</span></p>
+        </div>
+        <button id="restart" class="restart-button">Reiniciar Juego</button>
+      </div>
+      
+      <div class="game-content-right">
+        <div class="grid" id="grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla de Finalización -->
+  <div class="completion-screen" id="completion-screen" style="display: none;">
+    <!-- Indicador de envío de datos - Posicionado absolutamente -->
+    <div class="data-sending-indicator" id="data-sending-indicator">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Enviando datos...</p>
+    </div>
+    
+    <div class="completion-container">
+      <div class="completion-content-left">
+        <p class="completion-subject-label">Ciencias</p>
+        <h1 class="completion-title">¡Felicitaciones!</h1>
+        <p class="completion-description">Demostraste excelentes conocimientos en el tema seleccionado.</p>
+        
+        <div class="completion-stats">
+          <div class="completion-stat-item">
+            <span class="completion-stat-label">Puntuación:</span>
+            <span class="completion-stat-value" id="final-score">0</span>
+          </div>
+          <div class="completion-stat-item">
+            <span class="completion-stat-label">Movimientos:</span>
+            <span class="completion-stat-value" id="final-moves">0</span>
+          </div>
+          <div class="completion-stat-item">
+            <span class="completion-stat-label">Tiempo:</span>
+            <span class="completion-stat-value" id="final-time">0:00</span>
+          </div>
+          <div class="completion-stat-item">
+            <span class="completion-stat-label">Tema:</span>
+            <span class="completion-stat-value" id="final-topic">-</span>
+          </div>
+        </div>
+        
+        <div class="completion-buttons">
+          <button class="play-again-button" id="play-again-button">Jugar de Nuevo</button>
+          <button class="back-home-button" id="back-home-button">Volver al Inicio</button>
+        </div>
+      </div>
+      
+      <div class="completion-content-right">
+        <div class="completion-celebration">
+          <!-- Elementos decorativos de celebración -->
+          <div class="trophy-icon"></div>
+          <div class="star-1"></div>
+          <div class="star-2"></div>
+          <div class="star-3"></div>
+          <div class="confetti-1"></div>
+          <div class="confetti-2"></div>
+          <div class="confetti-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="correct-sound" src="assets/correct.mp3"></audio></audio>
+  <audio id="wrong-sound" src="assets/wrong.mp3"></audio>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
