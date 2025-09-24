@@ -55,13 +55,23 @@ topicButtons.forEach(button => {
   button.addEventListener('click', () => {
     const selectedTopic = button.dataset.topic;
     currentSelectedTopic = selectedTopic;
+    
+    // Verificar que los datos estén cargados
+    if (!currentTopicData) {
+      alert('Los datos del juego aún no se han cargado. Por favor, espera un momento.');
+      return;
+    }
+    
+    if (!currentTopicData[selectedTopic]) {
+      alert(`No se encontraron datos para el tema: ${selectedTopic}`);
+      return;
+    }
+    
     topicSelectionScreen.style.display = 'none';
     gameContainer.style.display = 'flex';
     
     // Cargar datos del tema seleccionado
-    if (currentTopicData && currentTopicData[selectedTopic]) {
-      initGame(currentTopicData[selectedTopic]);
-    }
+    initGame(currentTopicData[selectedTopic]);
   });
 });
 
@@ -90,8 +100,25 @@ backButton.addEventListener('click', () => {
   // Reiniciar el juego cuando se vuelve al inicio
   grid.innerHTML = '';
   moves = 0;
+  score = 0;
   movesCounter.textContent = moves;
-  currentTopicData = null;
+  scoreCounter.textContent = score;
+  timerCounter.textContent = '0:00';
+  
+  // Resetear variables del juego pero mantener los datos de temas
+  firstCard = null;
+  secondCard = null;
+  lockBoard = false;
+  cards = [];
+  currentSelectedTopic = null;
+  gameStartTime = null;
+  gameEndTime = null;
+  lastMoveTime = null;
+  correctStreak = 0;
+  totalPairs = 0;
+  correctChallenges = 0;
+  
+  // NO resetear currentTopicData para mantener los datos cargados
 });
 
 fetch('topics.json')
