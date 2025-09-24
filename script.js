@@ -17,10 +17,31 @@ const playAgainButton = document.getElementById('play-again-button');
 const backHomeButton = document.getElementById('back-home-button');
 const topicButtons = document.querySelectorAll('.topic-btn');
 
+// Función para extraer user_id de la URL
+function getUserId() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('user_id');
+  
+  if (userId) {
+    console.log('Usuario logueado:', userId);
+    // Aquí puedes usar el user_id para:
+    // - Guardar progreso del usuario
+    // - Personalizar la experiencia
+    // - Enviar estadísticas al backend
+    return userId;
+  } else {
+    console.log('Usuario no identificado');
+    return null;
+  }
+}
+
+// Llamar la función cuando cargue el juego
+const currentUserId = getUserId();
+
 // Configuración del API
 // Para desarrollo local: 'http://localhost:3000'
 // Para producción: 'https://puramentebackend.onrender.com'
-const API_BASE_URL = 'https://puramentebackend.onrender.com';
+
 
 let firstCard = null;
 let secondCard = null;
@@ -417,8 +438,8 @@ function sendGameDataToDatabase() {
   
   // Preparar datos exactos para la base de datos
   const gameData = {
-    user_id: 2, // ID estático por ahora
-    game_id: 1, // ID estático por ahora
+    user_id: currentUserId, // user_id dinámico desde la URL
+    game_id: 3, // ID estático por ahora
     correct_challenges: score, // Puntuación real obtenida por el usuario
     total_challenges: maxPossibleScore, // Puntuación máxima posible
     time_spent: timeInSeconds // Tiempo total en segundos
@@ -430,7 +451,7 @@ function sendGameDataToDatabase() {
   showDataSendingIndicator();
   
   // Enviar datos a la API
-  fetch(`${API_BASE_URL}/game-attempts/from-game`, {
+  fetch(`https://puramentebackend.onrender.com/api/game-attempts/from-game`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
