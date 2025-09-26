@@ -524,7 +524,7 @@ function sendGameDataToDatabase() {
   // Preparar datos exactos para la base de datos
   const gameData = {
     user_id: currentUserId, // user_id dinámico desde la URL
-    game_id: 3, // ID estático por ahora
+    game_id: 4, // ID estático por ahora
     correct_challenges: score, // Puntuación real obtenida por el usuario
     total_challenges: maxPossibleScore, // Puntuación máxima posible
     time_spent: timeInSeconds // Tiempo total en segundos
