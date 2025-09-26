@@ -15,7 +15,8 @@ const backButton = document.getElementById('back-button');
 const backTopicButton = document.getElementById('back-topic-button');
 const playAgainButton = document.getElementById('play-again-button');
 const backHomeButton = document.getElementById('back-home-button');
-const topicButtons = document.querySelectorAll('.topic-btn');
+// Los botones de tema se generarán dinámicamente, no necesitamos esta línea:
+// const topicButtons = document.querySelectorAll('.topic-btn');
 
 // Función para extraer user_id de la URL
 function getUserId() {
@@ -39,9 +40,10 @@ function getUserId() {
 const currentUserId = getUserId();
 
 // Configuración del API
-// Para desarrollo local: 'http://localhost:3000'
-// Para producción: 'https://puramentebackend.onrender.com'
-
+const API_CONFIG = {
+  BASE_URL: 'https://puramentebackend.onrender.com/api/gamedata/category/Ciencias',
+  FALLBACK_FILE: 'topics.json'
+};
 
 let firstCard = null;
 let secondCard = null;
@@ -59,6 +61,132 @@ let totalPairs = 0;
 let correctChallenges = 0;
 let timerInterval = null;
 
+// Función para cargar datos desde la API
+async function loadGameDataFromAPI() {
+  try {
+    const response = await fetch(API_CONFIG.BASE_URL);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const apiData = await response.json();
+    
+    if (apiData.success && apiData.data) {
+      // Transformar la estructura de la API al formato que usa el juego
+      const gameTopics = {};
+      
+      apiData.data.forEach(item => {
+        // Extraer los datos de cada subcategoría
+        Object.keys(item.gamedata).forEach(subject => {
+          gameTopics[subject] = item.gamedata[subject];
+        });
+      });
+      
+      return gameTopics;
+    } else {
+      throw new Error('Respuesta de API inválida');
+    }
+  } catch (error) {
+    return null;
+  }
+}
+
+
+
+// Función principal para cargar datos del juego
+async function loadGameData() {
+  showLoadingMessage('Cargando datos desde API...');
+  
+  try {
+  
+    let gameData = await loadGameDataFromAPI();
+    
+    
+    if (gameData && Object.keys(gameData).length > 0) {
+      hideLoadingMessage();
+      return gameData;
+    } else {
+      throw new Error('No se pudieron cargar los datos del juego desde la API');
+    }
+  } catch (error) {
+    hideLoadingMessage();
+    showErrorMessage('Error al cargar los datos del juego. Por favor, recarga la página.');
+    return null;
+  }
+}
+
+// Funciones para mostrar mensajes de carga y error
+function showLoadingMessage(message) {
+  const indicator = document.getElementById('data-sending-indicator');
+  const loadingText = indicator.querySelector('.loading-text');
+  
+  if (indicator && loadingText) {
+    loadingText.textContent = message;
+    indicator.style.display = 'flex';
+  }
+}
+
+function hideLoadingMessage() {
+  const indicator = document.getElementById('data-sending-indicator');
+  if (indicator) {
+    indicator.style.display = 'none';
+  }
+}
+
+function showErrorMessage(message) {
+  alert(message);
+}
+
+// Inicializar datos del juego al cargar la página
+document.addEventListener('DOMContentLoaded', async () => {
+  currentTopicData = await loadGameData();
+  
+  if (currentTopicData) {
+    // Generar botones dinámicamente basándose en los datos de la API
+    generateTopicButtons(currentTopicData);
+  }
+});
+
+// Función para generar botones de tema dinámicamente
+function generateTopicButtons(topicsData) {
+  const topicButtonsContainer = document.querySelector('.topic-buttons');
+  
+  if (!topicButtonsContainer) {
+    return;
+  }
+  
+  // Limpiar botones existentes
+  const existingButtons = topicButtonsContainer.querySelectorAll('.topic-btn');
+  existingButtons.forEach(btn => btn.remove());
+  
+  // Generar botones dinámicamente
+  Object.keys(topicsData).forEach(topicKey => {
+    const button = document.createElement('button');
+    button.classList.add('topic-btn');
+    button.dataset.topic = topicKey;
+    button.textContent = getTopicDisplayName(topicKey);
+    
+    // Agregar event listener
+    button.addEventListener('click', () => {
+      const selectedTopic = button.dataset.topic;
+      currentSelectedTopic = selectedTopic;
+      
+      if (!currentTopicData[selectedTopic]) {
+        alert(`No se encontraron datos para el tema: ${selectedTopic}`);
+        return;
+      }
+      
+      topicSelectionScreen.style.display = 'none';
+      gameContainer.style.display = 'flex';
+      initGame(currentTopicData[selectedTopic]);
+    });
+    
+    // Agregar botón al contenedor
+    topicButtonsContainer.appendChild(button);
+  });
+}
+
 // Navegación entre pantallas
 startButton.addEventListener('click', () => {
   startScreen.style.display = 'none';
@@ -69,31 +197,6 @@ startButton.addEventListener('click', () => {
 backTopicButton.addEventListener('click', () => {
   topicSelectionScreen.style.display = 'none';
   startScreen.style.display = 'flex';
-});
-
-// Manejo de selección de tema
-topicButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const selectedTopic = button.dataset.topic;
-    currentSelectedTopic = selectedTopic;
-    
-    // Verificar que los datos estén cargados
-    if (!currentTopicData) {
-      alert('Los datos del juego aún no se han cargado. Por favor, espera un momento.');
-      return;
-    }
-    
-    if (!currentTopicData[selectedTopic]) {
-      alert(`No se encontraron datos para el tema: ${selectedTopic}`);
-      return;
-    }
-    
-    topicSelectionScreen.style.display = 'none';
-    gameContainer.style.display = 'flex';
-    
-    // Cargar datos del tema seleccionado
-    initGame(currentTopicData[selectedTopic]);
-  });
 });
 
 // Botones de la pantalla de finalización
@@ -138,25 +241,7 @@ backButton.addEventListener('click', () => {
   correctStreak = 0;
   totalPairs = 0;
   correctChallenges = 0;
-  
-  // NO resetear currentTopicData para mantener los datos cargados
 });
-
-fetch('topics.json')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
-    // Almacenar los datos para usar en la selección de tema
-    currentTopicData = data;
-  })
-  .catch(err => {
-    console.error("Error cargando JSON: ", err);
-    alert("Error al cargar los datos del juego. Verifica que el archivo topics.json existe.");
-  });
 
 function initGame(topicPairs) {
   grid.innerHTML = '';
@@ -445,8 +530,6 @@ function sendGameDataToDatabase() {
     time_spent: timeInSeconds // Tiempo total en segundos
   };
   
-  console.log('Datos del juego para enviar a la base de datos:', gameData);
-  
   // Mostrar indicador de carga
   showDataSendingIndicator();
   
@@ -460,7 +543,6 @@ function sendGameDataToDatabase() {
   })
   .then(response => response.json())
   .then(data => {
-    console.log('Datos enviados exitosamente:', data);
     // Mostrar mensaje de éxito temporalmente
     updateLoadingText('¡Datos enviados correctamente!');
     setTimeout(() => {
@@ -468,7 +550,6 @@ function sendGameDataToDatabase() {
     }, 2000); // Ocultar después de 2 segundos
   })
   .catch(error => {
-    console.error('Error enviando datos:', error);
     // Mostrar mensaje de error temporalmente
     updateLoadingText('Error al enviar datos');
     setTimeout(() => {
@@ -486,4 +567,3 @@ restartBtn.addEventListener('click', () => {
   }
   initGame(currentTopicData[currentSelectedTopic]);
 });
-
