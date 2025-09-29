@@ -276,6 +276,37 @@ function initGame(topicPairs) {
     cardElement.addEventListener('click', flipCard);
     grid.appendChild(cardElement);
   });
+  // Ajustar legibilidad tras montar todas las cartas
+  adaptCardTextLegibility();
+}
+
+// Ajusta dinámicamente tamaños de texto y comportamiento de overflow en las cartas
+function adaptCardTextLegibility() {
+  const backs = grid.querySelectorAll('.card-back');
+  backs.forEach(back => {
+    const len = back.textContent.trim().length;
+
+    if (len > 85) {
+      back.classList.add('text-xs');
+    } else if (len > 55) {
+      back.classList.add('text-sm');
+    }
+
+    // Medir overflow real después del render
+    requestAnimationFrame(() => {
+      if (back.scrollHeight > back.clientHeight) {
+        // Intentar reducir un paso si aún no está en el mínimo
+        if (!back.classList.contains('text-xs')) {
+          back.classList.remove('text-sm');
+          back.classList.add('text-xs');
+        }
+        // Si todavía hay overflow, activar scroll interno
+        if (back.scrollHeight > back.clientHeight) {
+          back.classList.add('overflowing');
+        }
+      }
+    });
+  });
 }
 
 function flipCard() {
@@ -510,6 +541,12 @@ function updateLoadingText(text) {
 }
 
 function sendGameDataToDatabase() {
+  // Si no hay user_id (usuario anónimo) evitamos envío para prevenir errores en backend
+  if (!currentUserId) {
+    console.log('[GameData] user_id no presente en la URL. Se omite el envío de datos.');
+    return null; // No enviamos nada
+  }
+
   // Calcular tiempo total en segundos (solo si el juego realmente empezó)
   let timeInSeconds = 0;
   
