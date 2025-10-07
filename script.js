@@ -41,8 +41,8 @@ const currentUserId = getUserId();
 
 // Configuración del API
 const API_CONFIG = {
-  BASE_URL: 'https://puramentebackend.onrender.com/api/gamedata/category/Ciencias',
-  FALLBACK_FILE: 'topics.json'
+  BASE_URL: 'https://puramentebackend.onrender.com/api/gamedata/game/4/category/ciencias',
+  
 };
 
 let firstCard = null;
