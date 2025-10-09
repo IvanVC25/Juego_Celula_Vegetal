@@ -380,6 +380,13 @@ function generateTopicButtons(topicsData) {
       topicSelectionScreen.style.display = 'none';
       gameContainer.style.display = 'flex';
       initGame(currentTopicData[selectedTopic]);
+      
+      // Asegurar que la música de fondo esté reproduciéndose
+      if (audioEnabled && masterVolume > 0) {
+        backgroundMusic.play().catch(() => {
+          console.debug('No se pudo reproducir la música de fondo');
+        });
+      }
     });
     
     // Agregar botón al contenedor
@@ -391,6 +398,13 @@ function generateTopicButtons(topicsData) {
 startButton.addEventListener('click', () => {
   startScreen.style.display = 'none';
   topicSelectionScreen.style.display = 'flex';
+  
+  // Iniciar música de fondo con la primera interacción del usuario
+  if (audioEnabled && masterVolume > 0) {
+    backgroundMusic.play().catch(() => {
+      console.debug('No se pudo reproducir la música de fondo');
+    });
+  }
 });
 
 // Botón regresar desde selección de tema al inicio
@@ -405,6 +419,13 @@ playAgainButton.addEventListener('click', () => {
   hideDataSendingIndicator();
   completionScreen.style.display = 'none';
   topicSelectionScreen.style.display = 'flex';
+  
+  // Asegurar que la música de fondo esté reproduciéndose
+  if (audioEnabled && masterVolume > 0) {
+    backgroundMusic.play().catch(() => {
+      console.debug('No se pudo reproducir la música de fondo');
+    });
+  }
 });
 
 backHomeButton.addEventListener('click', () => {
@@ -826,4 +847,11 @@ restartBtn.addEventListener('click', () => {
     return;
   }
   initGame(currentTopicData[currentSelectedTopic]);
+  
+  // Asegurar que la música de fondo esté reproduciéndose
+  if (audioEnabled && masterVolume > 0) {
+    backgroundMusic.play().catch(() => {
+      console.debug('No se pudo reproducir la música de fondo');
+    });
+  }
 });

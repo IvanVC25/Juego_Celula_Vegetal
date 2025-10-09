@@ -783,18 +783,69 @@ body {
   }
   
   .grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    max-width: 100%;
   }
   
   .card {
-    height: 100px;
+    height: 110px;
   }
   
   .card-front,
   .card-back {
-    font-size: 12px;
-    padding: 10px;
+    font-size: 13px;
+    padding: 12px;
+  }
+  
+  /* Layout vertical para móvil */
+  .game-wrapper {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+    max-width: 95%;
+  }
+  
+  .game-content-left {
+    flex: none;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .game-content-right {
+    flex: none;
+    padding: 20px;
+    border-left: none;
+    border-bottom: none;
+  }
+  
+  .game-content-right.expanded {
+    padding: 20px;
+  }
+  
+  /* Grid expandido en móvil */
+  .game-content-right.expanded .grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+  }
+  
+  .game-content-right.expanded .card {
+    height: 120px;
+  }
+  
+  .game-content-right.expanded .card-front,
+  .game-content-right.expanded .card-back {
+    font-size: 14px;
+    padding: 12px;
+  }
+  
+  /* Botón volver en móvil */
+  .back-game-button {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 15px;
+    align-self: flex-start;
   }
   
   /* Responsivo para toggle de instrucciones */
@@ -802,13 +853,36 @@ body {
     width: 30px;
     height: 30px;
     font-size: 14px;
-    right: 5px;
+    right: 15px;
     top: 15px;
   }
   
   .game-content-left.collapsed {
-    min-width: 40px;
-    padding: 20px 5px;
+    min-width: auto;
+    padding: 10px 20px;
+    min-height: 60px;
+    /* Solo ocultar el contenido, mantener el contenedor y botón */
+  }
+  
+  .game-content-left {
+    /* Transición suave para móvil */
+    transition: all 0.5s ease;
+  }
+  
+  /* Animación vertical solo para el contenido de instrucciones en móvil */
+  .game-content-left.collapsed .instructions-content {
+    transform: translateY(-100%);
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: transform 0.5s ease, opacity 0.5s ease, height 0.5s ease;
+  }
+  
+  .game-content-left .instructions-content {
+    transform: translateY(0);
+    opacity: 1;
+    height: auto;
+    transition: transform 0.5s ease, opacity 0.5s ease, height 0.5s ease;
   }
   
   .game-content-right.expanded {
@@ -886,8 +960,66 @@ body {
     min-width: 180px;
   }
   
+  /* Pantalla de juego en móviles pequeños */
+  .game-wrapper {
+    margin: 5px;
+  }
+  
+  .game-content-left {
+    padding: 15px;
+  }
+  
+  .game-content-right {
+    padding: 15px;
+  }
+  
   .grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .card {
+    height: 120px;
+  }
+  
+  .card-front,
+  .card-back {
+    font-size: 12px;
+    padding: 8px;
+  }
+  
+  .game-content-right.expanded .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .game-content-right.expanded .card {
+    height: 130px;
+  }
+  
+  .back-game-button {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+  
+  /* Animaciones verticales para móvil - Solo contenido de instrucciones */
+  .game-content-left {
+    transition: all 0.5s ease;
+  }
+  
+  .game-content-left.collapsed .instructions-content {
+    transform: translateY(-100%);
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: transform 0.5s ease, opacity 0.5s ease, height 0.5s ease;
+  }
+  
+  .game-content-left .instructions-content {
+    transform: translateY(0);
+    opacity: 1;
+    height: auto;
+    transition: transform 0.5s ease, opacity 0.5s ease, height 0.5s ease;
   }
 }
 
@@ -1239,5 +1371,67 @@ body {
   
   .volume-slider-container {
     padding: 8px 6px;
+  }
+}
+
+/* Móviles en landscape */
+@media (max-width: 768px) and (orientation: landscape) {
+  .game-wrapper {
+    flex-direction: row;
+    height: 90vh;
+  }
+  
+  .game-content-left {
+    flex: 0.8;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: none;
+  }
+  
+  .game-content-right {
+    flex: 1.2;
+    border-left: none;
+  }
+  
+  /* Mantener animaciones horizontales en landscape */
+  .game-content-left {
+    transition: all 0.5s ease;
+  }
+  
+  .game-content-left.collapsed {
+    flex: 0;
+    min-width: 50px;
+    padding: 30px 10px;
+    min-height: auto;
+  }
+  
+  /* En landscape, usar animación horizontal tradicional */
+  .game-content-left.collapsed .instructions-content {
+    transform: translateX(-100%);
+    opacity: 0;
+    height: auto;
+    overflow: hidden;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  
+  .game-content-left .instructions-content {
+    transform: translateX(0);
+    opacity: 1;
+    height: auto;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  .card {
+    height: 90px;
+  }
+  
+  .card-front,
+  .card-back {
+    font-size: 11px;
+    padding: 6px;
   }
 }
