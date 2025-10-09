@@ -24,24 +24,11 @@
           </div>
           <div class="stat-item">
             <span class="stat-label">Record:</span>
-            <span class="stat-value">12 Movimientos</span>
+            <span class="stat-value" id="best-record">Sin récord</span>
           </div>
         </div>
         
         <button class="start-button" id="start-button">Empezar</button>
-      </div>
-      
-      <div class="content-right">
-        <div class="decorative-elements">
-          <!-- Elementos decorativos que simularán los iconos -->
-          <div class="costa-rica-map"></div>
-          <div class="icon-1"></div>
-          <div class="icon-2"></div>
-          <div class="icon-3"></div>
-          <div class="icon-4"></div>
-          <div class="icon-5"></div>
-          <div class="icon-6"></div>
-        </div>
       </div>
     </div>
   </div>
@@ -49,7 +36,7 @@
   <!-- Pantalla de Selección de Tema -->
   <div class="topic-selection-screen" id="topic-selection-screen" style="display: none;">
     <div class="topic-container">
-      <button class="back-topic-button" id="back-topic-button">← Volver al inicio</button>
+      <button class="back-topic-button" id="back-topic-button">Volver al inicio</button>
       <h1 class="topic-title">Empareja y Aprende</h1>
       <p class="topic-subtitle">Elige un tema para jugar!</p>
       
@@ -64,20 +51,26 @@
   <!-- Pantalla del Juego -->
   <div class="game-container" id="game-container" style="display: none;">
     <div class="game-wrapper">
-      <button class="back-game-button" id="back-button">← Volver al inicio</button>
       
-      <div class="game-content-left">
-        <h1 class="game-title-main">Empareja y Aprende</h1>
-        <p class="game-subtitle">Encuentra las parejas de términos y definiciones correctas para completar el desafío</p>
-        <div class="game-stats-container">
-          <p class="moves-counter">Movimientos: <span id="moves">0</span></p>
-          <p class="score-counter">Puntos: <span id="score">0</span></p>
-          <p class="timer-counter">Tiempo: <span id="timer">0:00</span></p>
+      <div class="game-content-left" id="game-content-left">
+        <button class="back-game-button" id="back-button">Volver al inicio</button>
+        <button class="toggle-instructions-btn" id="toggle-instructions-btn" title="Ocultar/Mostrar instrucciones">
+          <span class="arrow-icon">←</span>
+        </button>
+        
+        <div class="instructions-content" id="instructions-content">
+          <h1 class="game-title-main">Empareja y Aprende</h1>
+          <p class="game-subtitle">Encuentra las parejas de términos y definiciones correctas para completar el desafío</p>
+          <div class="game-stats-container">
+            <p class="moves-counter">Movimientos: <span id="moves">0</span></p>
+            <p class="score-counter">Puntos: <span id="score">0</span></p>
+            <p class="timer-counter">Tiempo: <span id="timer">0:00</span></p>
+          </div>
+          <button id="restart" class="restart-button">Reiniciar Juego</button>
         </div>
-        <button id="restart" class="restart-button">Reiniciar Juego</button>
       </div>
       
-      <div class="game-content-right">
+      <div class="game-content-right" id="game-content-right">
         <div class="grid" id="grid"></div>
       </div>
     </div>
@@ -137,8 +130,20 @@
     </div>
   </div>
 
+  <!-- Control de audio con slider -->
+  <div class="audio-control-container" id="audio-control-container">
+    <button class="audio-control-btn" id="audio-control-btn" title="Control de volumen">
+      <span class="audio-icon">🔊</span>
+    </button>
+    <div class="volume-slider-container" id="volume-slider-container">
+      <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="70" step="1">
+    </div>
+  </div>
+
   <audio id="correct-sound" src="assets/correct.mp3"></audio>
   <audio id="wrong-sound" src="assets/wrong.mp3"></audio>
+  <audio id="winning-sound" src="assets/winning.mp3"></audio>
+  <audio id="background-music" src="assets/background.mp3" loop></audio>
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,5 +1,44 @@
 const grid = document.getElementById('grid');
-const movesCounter = document.getElementById('moves');
+const movesCounter =    
+    /    // Re    // Re    // Restaurar el ícono según el volumen restaurado
+    if (previousVolume > 0.66) {
+      audioIcon.textContent = '🔊';
+    } else if (previousVolume > 0.33) {
+      audioIcon.textContent = '🔉';
+    } else if (previousVolume > 0) {
+      audioIcon.textContent = '🔈';
+    } else {
+      audioIcon.textContent = '🔇';
+    }
+    
+    // Solo reproducir música si el volumen restaurado no es 0ono según el volumen restaurado
+    if (previousVolume > 0.66) {
+      audioIcon.textContent = '🔊';
+    } else if (previousVolume > 0.33) {
+      audioIcon.textContent = '🔉';
+    } else if (previousVolume > 0) {
+      audioIcon.textContent = '🔈';
+    } else {
+      audioIcon.textContent = '🔇';
+    }ícono según el volumen restaurado
+    if (previousVolume > 0.66) {
+      audioIcon.textContent = '🔊';
+    } else if (previousVolume > 0.33) {
+      audioIcon.textContent = '🔉';
+    } else if (previousVolume > 0) {
+      audioIcon.textContent = '🔈';
+    } else {
+      audioIcon.textContent = '🔇';
+    } el ícono según el volumen restaurado
+    if (previousVolume > 0.66) {
+      audioIcon.textContent = '🔊';
+    } else if (previousVolume > 0.33) {
+      audioIcon.textContent = '🔉';
+    } else if (previousVolume > 0) {
+      audioIcon.textContent = '🔈';
+    } else {
+      audioIcon.textContent = '🔇';
+    }tElementById('moves');
 const scoreCounter = document.getElementById('score');
 const timerCounter = document.getElementById('timer');
 const correctSound = document.getElementById('correct-sound');
@@ -62,26 +101,23 @@ function toggleAudio() {
   } else {
     // Si está deshabilitado, habilitar (unmute)
     audioEnabled = true;
-    // Si previousVolume no está definido o es 0, usar un valor por defecto
-    if (!previousVolume || previousVolume === 0) {
-      previousVolume = 0.7;
-    }
     masterVolume = previousVolume; // Restaurar volumen anterior
     volumeSlider.value = Math.round(previousVolume * 100); // Restaurar slider
     audioControlBtn.classList.remove('muted');
     
-    // Restaurar el ícono según el volumen restaurado
-    if (previousVolume > 0.66) {
+    // Restaurar el ícono según el volumen actual
+    const sliderValue = parseInt(volumeSlider.value);
+    if (sliderValue > 66) {
       audioIcon.textContent = '🔊';
-    } else if (previousVolume > 0.33) {
+    } else if (sliderValue > 33) {
       audioIcon.textContent = '🔉';
-    } else if (previousVolume > 0) {
+    } else if (sliderValue > 0) {
       audioIcon.textContent = '�';
     } else {
       audioIcon.textContent = '🔇';
     }
     
-    // Solo reproducir música si el volumen restaurado no es 0
+    // Solo reproducir música si el volumen no es 0
     if (masterVolume > 0) {
       backgroundMusic.play().catch(() => {
         console.debug('Audio requiere interacción del usuario');
