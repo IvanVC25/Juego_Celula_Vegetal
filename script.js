@@ -224,11 +224,19 @@ function updateRecordIfNeeded(moves) {
 // CONFIGURACIÓN DEL JUEGO
 // ========================================
 // ⚙️ IMPORTANTE: Configura este valor según el juego actual
+
+// Detectar si estamos en local o producción
+const isLocalhost = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' ||
+                    window.location.hostname.includes('192.168.');
+
 const GAME_CONFIG = {
   GAME_ID: 4,  // 🔧 CAMBIA ESTE NÚMERO según el juego:
-               
-  API_BASE_URL: 'http://puramente.test' // URL base de tu API
+  API_BASE_URL:'https://puramentebackend.onrender.com' // Backend producción
 };
+
+console.log('🌍 Entorno detectado:', isLocalhost ? 'LOCAL' : 'PRODUCCIÓN');
+console.log('🔗 API Base URL:', GAME_CONFIG.API_BASE_URL);
 
 // Variables globales para parámetros de URL
 let currentUserId = null;
@@ -258,6 +266,21 @@ function getURLParameters() {
     subject: subject,
     gameId: GAME_CONFIG.GAME_ID
   });
+  
+  // Advertencias de parámetros faltantes
+  if (!sessionToken) {
+    console.warn('⚠️ ADVERTENCIA: Parámetro "session" no encontrado en la URL');
+    console.warn('   El juego funcionará pero no se podrá rastrear la sesión');
+  }
+  
+  if (!subject) {
+    console.warn('⚠️ ADVERTENCIA: Parámetro "subject" no encontrado. Usando valor por defecto: "Ciencias"');
+  }
+  
+  if (!currentUserId) {
+    console.warn('⚠️ ADVERTENCIA: Parámetro "user_id" no encontrado');
+    console.warn('   El juego funcionará en modo invitado (sin guardar progreso)');
+  }
   
   return {
     userId: currentUserId,
