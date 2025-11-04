@@ -230,18 +230,44 @@ const GAME_CONFIG = {
   API_BASE_URL: 'http://puramente.test' // URL base de tu API
 };
 
-// Obtener parámetros de la URL al cargar
-const urlParams = new URLSearchParams(window.location.search);
-const currentUserId = urlParams.get('user_id') || null;
-const sessionToken = urlParams.get('session') || '';
-const subject = urlParams.get('subject') || 'Ciencias'; // Valor por defecto
+// Variables globales para parámetros de URL
+let currentUserId = null;
+let sessionToken = '';
+let subject = 'Ciencias';
 
-console.log('📍 Parámetros de la URL capturados:', {
-  userId: currentUserId,
-  session: sessionToken,
-  subject: subject,
-  gameId: GAME_CONFIG.GAME_ID
-});
+// Función para obtener y validar parámetros de la URL
+function getURLParameters() {
+  console.log('🔍 URL completa:', window.location.href);
+  console.log('🔍 Query string:', window.location.search);
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  // Mostrar todos los parámetros disponibles
+  console.log('🔍 Todos los parámetros disponibles:');
+  for (let [key, value] of urlParams.entries()) {
+    console.log(`  ${key} = ${value}`);
+  }
+  
+  currentUserId = urlParams.get('user_id') || null;
+  sessionToken = urlParams.get('session') || '';
+  subject = urlParams.get('subject') || 'Ciencias';
+  
+  console.log('📍 Parámetros de la URL capturados:', {
+    userId: currentUserId,
+    session: sessionToken,
+    subject: subject,
+    gameId: GAME_CONFIG.GAME_ID
+  });
+  
+  return {
+    userId: currentUserId,
+    session: sessionToken,
+    subject: subject
+  };
+}
+
+// Capturar parámetros al cargar
+getURLParameters();
 
 let firstCard = null;
 let secondCard = null;
@@ -396,10 +422,17 @@ function generateTopicButtons(topicsData) {
   existingButtons.forEach(btn => btn.remove());
   
   // Generar botones dinámicamente
-  Object.keys(topicsData).forEach(topicKey => {
+  Object.keys(topicsData).forEach((topicKey, index) => {
+    // Validar que topicKey no esté vacío
+    if (!topicKey || topicKey.trim() === '') {
+      console.warn('⚠️ Se encontró una clave de tema vacía, omitiendo...');
+      return;
+    }
+    
     const button = document.createElement('button');
     button.classList.add('topic-btn');
     button.dataset.topic = topicKey;
+    button.setAttribute('data-index', index); // Agregar índice único para evitar duplicados
     button.textContent = getTopicDisplayName(topicKey);
     
     // Agregar event listener
