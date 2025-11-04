@@ -218,29 +218,30 @@ function updateRecordIfNeeded(moves) {
   return isNewRecord;
 }
 
-// Función para extraer user_id de la URL
 
-function getUserId() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const userId = urlParams.get('user_id');
-  
-  if (userId) {
-    console.log('Usuario logueado:', userId);
-    return userId;
-  } else {
-    console.debug('Usuario no identificado - jugando en modo invitado');
-    return null;
-  }
-}
 
-// Llamar la función cuando cargue el juego
-const currentUserId = getUserId();
-
-// Configuración del API
-const API_CONFIG = {
-  BASE_URL: 'https://puramentebackend.onrender.com/api/gamedata/game/4/category/ciencias',
-  
+// ========================================
+// CONFIGURACIÓN DEL JUEGO
+// ========================================
+// ⚙️ IMPORTANTE: Configura este valor según el juego actual
+const GAME_CONFIG = {
+  GAME_ID: 4,  // 🔧 CAMBIA ESTE NÚMERO según el juego:
+               
+  API_BASE_URL: 'http://puramente.test' // URL base de tu API
 };
+
+// Obtener parámetros de la URL al cargar
+const urlParams = new URLSearchParams(window.location.search);
+const currentUserId = urlParams.get('user_id') || null;
+const sessionToken = urlParams.get('session') || '';
+const subject = urlParams.get('subject') || 'Ciencias'; // Valor por defecto
+
+console.log('📍 Parámetros de la URL capturados:', {
+  userId: currentUserId,
+  session: sessionToken,
+  subject: subject,
+  gameId: GAME_CONFIG.GAME_ID
+});
 
 let firstCard = null;
 let secondCard = null;
@@ -259,28 +260,43 @@ let correctChallenges = 0;
 let timerInterval = null;
 
 
+// ========================================
 // Función para cargar datos desde la API
+// ========================================
 async function loadGameDataFromAPI() {
+  console.log('🎮 Iniciando carga de datos desde API...');
+  
   try {
-    // Obtener el token de sesión desde la URL del juego
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionToken = urlParams.get('session') || '';
+    // Validar que tenemos los parámetros necesarios
+    if (!subject) {
+      throw new Error('Falta el parámetro requerido: subject en la URL');
+    }
 
-    // Construir la URL de la API
-    let apiUrl = API_CONFIG.BASE_URL;
+    // Construir la URL de la API correctamente
+    // Formato: /api/game/{game_id}/category/{category}?session={token}
+    let apiUrl = `${GAME_CONFIG.API_BASE_URL}/api/game/${GAME_CONFIG.GAME_ID}/category/${encodeURIComponent(subject)}`;
     
     // Agregar el parámetro session si está disponible
     if (sessionToken) {
       apiUrl += `?session=${sessionToken}`;
     }
+    
+    console.log('🌐 URL de la API construida:', apiUrl);
 
     const response = await fetch(apiUrl);
+    
+    console.log('📥 Respuesta HTTP status:', response.status);
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Error en la respuesta:', errorText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const apiData = await response.json();
+    
+    console.log('📦 Datos recibidos del API:', apiData);
+    console.log('🎯 Source de los datos:', apiData.source);
 
     if (apiData.success && apiData.data) {
       // Transformar la estructura de la API al formato que usa el juego
@@ -288,17 +304,25 @@ async function loadGameDataFromAPI() {
 
       apiData.data.forEach(item => {
         // Extraer los datos de cada subcategoría
-        Object.keys(item.gamedata).forEach(subject => {
-          gameTopics[subject] = item.gamedata[subject];
+        Object.keys(item.gamedata).forEach(subcategory => {
+          gameTopics[subcategory] = item.gamedata[subcategory];
         });
       });
 
+      console.log('✅ Datos transformados:', gameTopics);
+      console.log('📊 Subcategorías encontradas:', Object.keys(gameTopics));
+      
       return gameTopics;
     } else {
-      throw new Error('Respuesta de API inválida');
+      throw new Error('Respuesta de API inválida: ' + JSON.stringify(apiData));
     }
   } catch (error) {
-    console.error('Error cargando datos desde la API:', error);
+    console.error('❌ Error cargando datos desde la API:', error);
+    console.error('Stack trace:', error.stack);
+    
+    // Mostrar mensaje de error al usuario
+    alert(`Error al cargar los datos del juego:\n${error.message}\n\nPor favor, verifica la consola para más detalles.`);
+    
     return null;
   }
 }
