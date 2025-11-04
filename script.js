@@ -219,16 +219,13 @@ function updateRecordIfNeeded(moves) {
 }
 
 // Función para extraer user_id de la URL
+
 function getUserId() {
   const urlParams = new URLSearchParams(window.location.search);
   const userId = urlParams.get('user_id');
   
   if (userId) {
     console.log('Usuario logueado:', userId);
-    // Aquí puedes usar el user_id para:
-    // - Guardar progreso del usuario
-    // - Personalizar la experiencia
-    // - Enviar estadísticas al backend
     return userId;
   } else {
     console.debug('Usuario no identificado - jugando en modo invitado');
@@ -269,10 +266,13 @@ async function loadGameDataFromAPI() {
     const urlParams = new URLSearchParams(window.location.search);
     const sessionToken = urlParams.get('session') || '';
 
-    // Agregar el parámetro `session` a la URL de la API si está disponible
-    const apiUrl = sessionToken
-      ? `${API_CONFIG.BASE_URL}?session=${sessionToken}`
-      : API_CONFIG.BASE_URL;
+    // Construir la URL de la API
+    let apiUrl = API_CONFIG.BASE_URL;
+    
+    // Agregar el parámetro session si está disponible
+    if (sessionToken) {
+      apiUrl += `?session=${sessionToken}`;
+    }
 
     const response = await fetch(apiUrl);
 
@@ -307,7 +307,7 @@ async function loadGameDataFromAPI() {
 
 // Función principal para cargar datos del juego
 async function loadGameData() {
-  showLoadingMessage('Cargando datos desde API...');
+  showLoadingMessage('Cargando...');
   
   try {
   
@@ -318,7 +318,7 @@ async function loadGameData() {
       hideLoadingMessage();
       return gameData;
     } else {
-      throw new Error('No se pudieron cargar los datos del juego desde la API');
+      throw new Error('No se pudieron cargar los datos del juego');
     }
   } catch (error) {
     hideLoadingMessage();
