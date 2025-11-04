@@ -261,33 +261,44 @@ let totalPairs = 0;
 let correctChallenges = 0;
 let timerInterval = null;
 
+
 // Función para cargar datos desde la API
 async function loadGameDataFromAPI() {
   try {
-    const response = await fetch(API_CONFIG.BASE_URL);
-    
+    // Obtener el token de sesión desde la URL del juego
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionToken = urlParams.get('session') || '';
+
+    // Agregar el parámetro `session` a la URL de la API si está disponible
+    const apiUrl = sessionToken
+      ? `${API_CONFIG.BASE_URL}?session=${sessionToken}`
+      : API_CONFIG.BASE_URL;
+
+    const response = await fetch(apiUrl);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const apiData = await response.json();
-    
+
     if (apiData.success && apiData.data) {
       // Transformar la estructura de la API al formato que usa el juego
       const gameTopics = {};
-      
+
       apiData.data.forEach(item => {
         // Extraer los datos de cada subcategoría
         Object.keys(item.gamedata).forEach(subject => {
           gameTopics[subject] = item.gamedata[subject];
         });
       });
-      
+
       return gameTopics;
     } else {
       throw new Error('Respuesta de API inválida');
     }
   } catch (error) {
+    console.error('Error cargando datos desde la API:', error);
     return null;
   }
 }
