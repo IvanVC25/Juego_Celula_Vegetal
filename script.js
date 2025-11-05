@@ -352,10 +352,38 @@ async function loadGameDataFromAPI() {
       const gameTopics = {};
 
       apiData.data.forEach(item => {
-        // Extraer los datos de cada subcategoría
-        Object.keys(item.gamedata).forEach(subcategory => {
-          gameTopics[subcategory] = item.gamedata[subcategory];
-        });
+        console.log('🔍 Procesando item:', item);
+        console.log('🔍 Tipo de gamedata:', Array.isArray(item.gamedata) ? 'Array' : 'Object');
+        
+        // Verificar si gamedata es un array o un objeto
+        if (Array.isArray(item.gamedata)) {
+          // Si es un array, procesar cada elemento
+          item.gamedata.forEach((gameDataItem, index) => {
+            console.log(`🔍 GameData item ${index}:`, gameDataItem);
+            
+            // Buscar la clave que contiene los datos reales (puede ser 'subcategoria' u otra)
+            if (gameDataItem.title && gameDataItem.subcategoria) {
+              // Usar el título como clave
+              const topicKey = gameDataItem.title;
+              gameTopics[topicKey] = gameDataItem.subcategoria;
+              console.log(`✅ Agregado tema: "${topicKey}" con ${gameDataItem.subcategoria.length} pares`);
+            } else {
+              // Si no tiene la estructura esperada, usar las claves que tenga
+              Object.keys(gameDataItem).forEach(key => {
+                if (Array.isArray(gameDataItem[key]) && gameDataItem[key].length > 0) {
+                  gameTopics[key] = gameDataItem[key];
+                  console.log(`✅ Agregado tema: "${key}" con ${gameDataItem[key].length} pares`);
+                }
+              });
+            }
+          });
+        } else {
+          // Si es un objeto, usar el método anterior
+          Object.keys(item.gamedata).forEach(subcategory => {
+            gameTopics[subcategory] = item.gamedata[subcategory];
+            console.log(`✅ Agregado tema: "${subcategory}"`);
+          });
+        }
       });
 
       console.log('✅ Datos transformados:', gameTopics);
