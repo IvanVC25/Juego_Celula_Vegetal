@@ -225,18 +225,14 @@ function updateRecordIfNeeded(moves) {
 // ========================================
 // ⚙️ IMPORTANTE: Configura este valor según el juego actual
 
-// Detectar si estamos en local o producción
-const isLocalhost = window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1' ||
-                    window.location.hostname.includes('192.168.');
+
 
 const GAME_CONFIG = {
   GAME_ID: 4,  // 🔧 CAMBIA ESTE NÚMERO según el juego:
   API_BASE_URL:'https://puramentebackend.onrender.com' // Backend producción
 };
 
-console.log('🌍 Entorno detectado:', isLocalhost ? 'LOCAL' : 'PRODUCCIÓN');
-console.log('🔗 API Base URL:', GAME_CONFIG.API_BASE_URL);
+
 
 // Variables globales para parámetros de URL
 let currentUserId = null;
@@ -245,27 +241,16 @@ let subject = 'Ciencias';
 
 // Función para obtener y validar parámetros de la URL
 function getURLParameters() {
-  console.log('🔍 URL completa:', window.location.href);
-  console.log('🔍 Query string:', window.location.search);
+ 
   
   const urlParams = new URLSearchParams(window.location.search);
   
-  // Mostrar todos los parámetros disponibles
-  console.log('🔍 Todos los parámetros disponibles:');
-  for (let [key, value] of urlParams.entries()) {
-    console.log(`  ${key} = ${value}`);
-  }
   
   currentUserId = urlParams.get('user_id') || null;
   sessionToken = urlParams.get('session') || '';
   subject = urlParams.get('subject') || 'Ciencias';
   
-  console.log('📍 Parámetros de la URL capturados:', {
-    userId: currentUserId,
-    session: sessionToken,
-    subject: subject,
-    gameId: GAME_CONFIG.GAME_ID
-  });
+  
   
   // Advertencias de parámetros faltantes
   if (!sessionToken) {
@@ -313,8 +298,6 @@ let timerInterval = null;
 // Función para cargar datos desde la API
 // ========================================
 async function loadGameDataFromAPI() {
-  console.log('🎮 Iniciando carga de datos desde API...');
-  
   try {
     // Validar que tenemos los parámetros necesarios
     if (!subject) {
@@ -329,77 +312,46 @@ async function loadGameDataFromAPI() {
     if (sessionToken) {
       apiUrl += `?session=${sessionToken}`;
     }
-    
-    console.log('🌐 URL de la API construida:', apiUrl);
 
     const response = await fetch(apiUrl);
     
-    console.log('📥 Respuesta HTTP status:', response.status);
-
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Error en la respuesta:', errorText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const apiData = await response.json();
-    
-    console.log('📦 Datos recibidos del API:', apiData);
-    console.log('🎯 Source de los datos:', apiData.source);
 
     if (apiData.success && apiData.data) {
-      // Transformar la estructura de la API al formato que usa el juego
       const gameTopics = {};
 
       apiData.data.forEach(item => {
-        console.log('🔍 Procesando item:', item);
-        console.log('🔍 Tipo de gamedata:', Array.isArray(item.gamedata) ? 'Array' : 'Object');
-        
-        // Verificar si gamedata es un array o un objeto
         if (Array.isArray(item.gamedata)) {
-          // Si es un array, procesar cada elemento
-          item.gamedata.forEach((gameDataItem, index) => {
-            console.log(`🔍 GameData item ${index}:`, gameDataItem);
-            
-            // Buscar la clave que contiene los datos reales (puede ser 'subcategoria' u otra)
+          item.gamedata.forEach(gameDataItem => {
             if (gameDataItem.title && gameDataItem.subcategoria) {
-              // Usar el título como clave
               const topicKey = gameDataItem.title;
               gameTopics[topicKey] = gameDataItem.subcategoria;
-              console.log(`✅ Agregado tema: "${topicKey}" con ${gameDataItem.subcategoria.length} pares`);
             } else {
-              // Si no tiene la estructura esperada, usar las claves que tenga
               Object.keys(gameDataItem).forEach(key => {
                 if (Array.isArray(gameDataItem[key]) && gameDataItem[key].length > 0) {
                   gameTopics[key] = gameDataItem[key];
-                  console.log(`✅ Agregado tema: "${key}" con ${gameDataItem[key].length} pares`);
                 }
               });
             }
           });
         } else {
-          // Si es un objeto, usar el método anterior
           Object.keys(item.gamedata).forEach(subcategory => {
             gameTopics[subcategory] = item.gamedata[subcategory];
-            console.log(`✅ Agregado tema: "${subcategory}"`);
           });
         }
       });
 
-      console.log('✅ Datos transformados:', gameTopics);
-      console.log('📊 Subcategorías encontradas:', Object.keys(gameTopics));
-      
       return gameTopics;
     } else {
       throw new Error('Respuesta de API inválida: ' + JSON.stringify(apiData));
     }
   } catch (error) {
-    console.error('❌ Error cargando datos desde la API:', error);
-    console.error('Stack trace:', error.stack);
-    
-    // Mostrar mensaje de error al usuario
     alert(`Error al cargar los datos del juego:\n${error.message}\n\nPor favor, verifica la consola para más detalles.`);
-    
     return null;
   }
 }
