@@ -323,7 +323,7 @@ async function loadGameDataFromAPI() {
 
     // Construir la URL de la API correctamente
     // Formato: /api/game/{game_id}/category/{category}?session={token}
-    let apiUrl = `${GAME_CONFIG.API_BASE_URL}/api/game/${GAME_CONFIG.GAME_ID}/category/${encodeURIComponent(subject)}`;
+    let apiUrl = `${GAME_CONFIG.API_BASE_URL}/api/gamedata/game/${GAME_CONFIG.GAME_ID}/category/${encodeURIComponent(subject)}`;
     
     // Agregar el parámetro session si está disponible
     if (sessionToken) {
